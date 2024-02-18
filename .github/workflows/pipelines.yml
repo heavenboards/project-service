@@ -1,0 +1,76 @@
+name: 🔥 Сборка и тесты МР-а
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 👉🏼 Переключаемся на файлы проекта
+        uses: actions/checkout@v3
+
+      - name: 👉🏼 Инициализируем гит сабмодули
+        run: |
+          git submodule update --init --remote --recursive
+          git submodule foreach 'git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"'
+
+      - name: 👉🏼 Настройка JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: 👉🏼 Делаем maven wrapper исполняемым
+        run: chmod +x ./mvnw
+
+      - name: 👉🏼 Запускаем проверку Code Style
+        run: ./mvnw checkstyle:check
+  build:
+    runs-on: ubuntu-latest
+    needs: checkstyle
+    steps:
+      - name: 👉🏼 Переключаемся на файлы проекта
+        uses: actions/checkout@v3
+
+      - name: 👉🏼 Инициализируем гит сабмодули
+        run: |
+          git submodule update --init --remote --recursive
+          git submodule foreach 'git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"'
+
+      - name: 👉🏼 Настройка JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: 👉🏼 Делаем maven wrapper исполняемым
+        run: chmod +x ./mvnw
+
+      - name: 👉🏼 Запускаем сборку без тестов
+        run: ./mvnw clean package -DskipTests
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 👉🏼 Переключаемся на файлы проекта
+        uses: actions/checkout@v3
+
+      - name: 👉🏼 Инициализируем гит сабмодули
+        run: |
+          git submodule update --init --remote --recursive
+          git submodule foreach 'git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"'
+
+      - name: 👉🏼 Настройка JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: 👉🏼 Делаем maven wrapper исполняемым
+        run: chmod +x ./mvnw
+
+      - name: 👉🏼 Запускаем тесты
+        run: ./mvnw clean package
