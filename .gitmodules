@@ -1,0 +1,9 @@
+[submodule "parent"]
+	path = parent
+	url = https://github.com/heavenboards/backend-parent.git
+[submodule "src/submodules/transfer-contract"]
+	path = src/submodules/transfer-contract
+	url = https://github.com/heavenboards/transfer-contract.git
+[submodule "src/submodules/security-service"]
+	path = src/submodules/security-service
+	url = https://github.com/heavenboards/security-service.git

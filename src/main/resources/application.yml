@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5436/project_service
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:/db/changelog.xml
+  docker:
+    compose:
+      enabled: true
+      file: classpath:/docker-compose.yml
+  web:
+    resources:
+      add-mappings: false
+server:
+  port: 8094
+  error:
+    whitelabel:
+      enabled: false
+microservice:
+  user-api:
+    url: http://localhost:8093
