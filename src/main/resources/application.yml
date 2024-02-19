@@ -28,3 +28,8 @@ server:
 microservice:
   user-api:
     url: http://localhost:8093
+  project-api:
+    url: http://localhost:8094
+jwt:
+  secret: 4534A29BE19F7D52DFCFA25F266C74534A29BE19F7D52DFCFA25F266C74534A29BE19F7D52DFCFA25F266C7
+  expiration-time-seconds: 3600

@@ -2,11 +2,17 @@ package heavenboards.project.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * Главный класс для запуска сервиса.
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+    "heavenboards.project.service",
+    "security.service",
+    "transfer.contract"
+})
+@EnableFeignClients(basePackages = "transfer.contract")
 public class ProjectServiceApplication {
     /**
      * Главный метод для запуска сервиса.
