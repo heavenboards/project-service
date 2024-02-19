@@ -1,9 +1,11 @@
 package heavenboards.project.service.project;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import transfer.contract.domain.common.OperationResult;
+import transfer.contract.domain.project.ProjectOperationErrorCode;
 import transfer.contract.domain.project.ProjectOperationResultTo;
 import transfer.contract.domain.project.ProjectTo;
 import transfer.contract.domain.user.UserTo;
@@ -57,7 +59,11 @@ public class ProjectService {
     public ProjectOperationResultTo createProject(final ProjectTo project) {
         var user = (UserTo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (projectRepository.existsByNameAndUserId(project.getName(), user.getId())) {
-            return ProjectOperationResultTo.of(OperationResult.FAILED);
+            return ProjectOperationResultTo.builder()
+                .operationResult(OperationResult.FAILED)
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .operationErrorCode(ProjectOperationErrorCode.NAME_ALREADY_EXIST)
+                .build();
         }
 
         ProjectEntity projectEntity = ProjectEntity.builder()
@@ -70,6 +76,6 @@ public class ProjectService {
             .build()));
 
         projectRepository.save(projectEntity);
-        return ProjectOperationResultTo.of(OperationResult.OK);
+        return ProjectOperationResultTo.ok();
     }
 }
