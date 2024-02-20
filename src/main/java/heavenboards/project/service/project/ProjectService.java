@@ -1,10 +1,9 @@
 package heavenboards.project.service.project;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import transfer.contract.domain.common.OperationResult;
+import transfer.contract.domain.common.OperationStatus;
 import transfer.contract.domain.project.ProjectOperationErrorCode;
 import transfer.contract.domain.project.ProjectOperationResultTo;
 import transfer.contract.domain.project.ProjectTo;
@@ -12,6 +11,7 @@ import transfer.contract.domain.user.UserTo;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -59,10 +59,14 @@ public class ProjectService {
     public ProjectOperationResultTo createProject(final ProjectTo project) {
         var user = (UserTo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (projectRepository.existsByNameAndUserId(project.getName(), user.getId())) {
+            UUID failedEntityId = projectRepository.findIdByName(project.getName(), user.getId());
             return ProjectOperationResultTo.builder()
-                .operationResult(OperationResult.FAILED)
-                .httpStatus(HttpStatus.BAD_REQUEST)
-                .operationErrorCode(ProjectOperationErrorCode.NAME_ALREADY_EXIST)
+                .status(OperationStatus.FAILED)
+                .entityId(failedEntityId)
+                .errors(List.of(ProjectOperationResultTo.ProjectOperationErrorTo.builder()
+                    .failedEntityId(failedEntityId)
+                    .errorCode(ProjectOperationErrorCode.NAME_ALREADY_EXIST)
+                    .build()))
                 .build();
         }
 
@@ -76,6 +80,8 @@ public class ProjectService {
             .build()));
 
         projectRepository.save(projectEntity);
-        return ProjectOperationResultTo.ok();
+        return ProjectOperationResultTo.builder()
+            .entityId(projectEntity.getId())
+            .build();
     }
 }

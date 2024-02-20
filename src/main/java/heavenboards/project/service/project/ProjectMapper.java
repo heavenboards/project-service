@@ -46,7 +46,7 @@ public abstract class ProjectMapper {
     @SuppressWarnings("unused")
     protected void afterMappingFromEntity(final @MappingTarget ProjectTo to,
                                           final ProjectEntity entity) {
-        List<UserTo> users = userApi.findAllByIds(entity.getProjectUsers().stream()
+        List<UserTo> users = userApi.findUsersByIds(entity.getProjectUsers().stream()
             .map(ProjectUserEntity::getUserId).collect(Collectors.toSet()));
 
         to.setUsers(users);

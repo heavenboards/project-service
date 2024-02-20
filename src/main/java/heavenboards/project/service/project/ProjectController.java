@@ -2,7 +2,6 @@ package heavenboards.project.service.project;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,10 +38,7 @@ public class ProjectController {
      * @return результат операции создания
      */
     @PostMapping
-    public ResponseEntity<?> createProject(final @Valid @RequestBody ProjectTo project) {
-        ProjectOperationResultTo result = projectService.createProject(project);
-        return ResponseEntity
-            .status(result.getHttpStatus())
-            .body(result);
+    public ProjectOperationResultTo createProject(final @Valid @RequestBody ProjectTo project) {
+        return projectService.createProject(project);
     }
 }
