@@ -22,10 +22,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import transfer.contract.api.UserApi;
-import transfer.contract.domain.common.OperationResult;
+import transfer.contract.domain.common.OperationStatus;
 import transfer.contract.domain.project.ProjectOperationErrorCode;
 import transfer.contract.domain.project.ProjectOperationResultTo;
 import transfer.contract.domain.project.ProjectTo;
+
+import java.util.List;
 
 /**
  * Тест создания проекта.
@@ -83,8 +85,8 @@ public class ProjectCreateIntegrationTest {
             .as(ProjectOperationResultTo.class);
 
         Assertions.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-        Assertions.assertNotNull(operationResult);
-        Assertions.assertEquals(OperationResult.OK, operationResult.getOperationResult());
+        Assertions.assertEquals(OperationStatus.OK, operationResult.getStatus());
+        Assertions.assertNotNull(operationResult.getEntityId());
     }
 
     /**
@@ -96,18 +98,19 @@ public class ProjectCreateIntegrationTest {
         securityTestUtil.securityContextHelper();
         Mockito.when(userApi.findUserByUsername(Mockito.any()))
             .thenReturn(securityTestUtil.getAuthenticatedUser());
-        createProjectAndGetResponse();
+        Response firstProjectCreateResponse = createProjectAndGetResponse();
         Response response = createProjectAndGetResponse();
         ProjectOperationResultTo operationResult = response
             .getBody()
             .as(ProjectOperationResultTo.class);
 
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
-        Assertions.assertNotNull(operationResult);
-        Assertions.assertNotNull(operationResult.getOperationErrorCode());
-        Assertions.assertEquals(OperationResult.FAILED, operationResult.getOperationResult());
-        Assertions.assertEquals(ProjectOperationErrorCode.NAME_ALREADY_EXIST,
-            operationResult.getOperationErrorCode());
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+        Assertions.assertEquals(OperationStatus.FAILED, operationResult.getStatus());
+        Assertions.assertEquals(List.of(ProjectOperationResultTo.ProjectOperationErrorTo.builder()
+            .failedEntityId(firstProjectCreateResponse.getBody().as(ProjectOperationResultTo.class)
+                .getEntityId())
+            .errorCode(ProjectOperationErrorCode.NAME_ALREADY_EXIST)
+            .build()), operationResult.getErrors());
     }
 
     /**
