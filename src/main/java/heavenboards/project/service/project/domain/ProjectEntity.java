@@ -1,4 +1,4 @@
-package heavenboards.project.service.project;
+package heavenboards.project.service.project.domain;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

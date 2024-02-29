@@ -1,5 +1,7 @@
-package heavenboards.project.service.project;
+package heavenboards.project.service.project.mapping;
 
+import heavenboards.project.service.project.domain.ProjectEntity;
+import heavenboards.project.service.project.domain.ProjectUserEntity;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -33,7 +35,7 @@ public abstract class ProjectMapper {
      */
     @Mapping(target = "users", ignore = true)
     @Mapping(target = "boards", ignore = true)
-    protected abstract ProjectTo mapFromEntity(@MappingTarget ProjectTo to,
+    public abstract ProjectTo mapFromEntity(@MappingTarget ProjectTo to,
                                                ProjectEntity entity);
 
     /**

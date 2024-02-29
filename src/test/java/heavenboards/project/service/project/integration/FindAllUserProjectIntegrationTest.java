@@ -1,4 +1,4 @@
-package heavenboards.project.service.integration;
+package heavenboards.project.service.project.integration;
 
 import heavenboards.project.service.SecurityTestUtil;
 import io.restassured.RestAssured;

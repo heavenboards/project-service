@@ -1,5 +1,8 @@
-package heavenboards.project.service.project;
+package heavenboards.project.service.project.service;
 
+import heavenboards.project.service.project.domain.ProjectEntity;
+import heavenboards.project.service.project.domain.ProjectRepository;
+import heavenboards.project.service.project.domain.ProjectUserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -12,43 +15,17 @@ import transfer.contract.domain.user.UserTo;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
- * Сервис для проектов.
+ * Use case создания проекта.
  */
 @Service
 @RequiredArgsConstructor
-public class ProjectService {
+public class ProjectCreateUseCase {
     /**
      * Репозиторий для проектов.
      */
     private final ProjectRepository projectRepository;
-
-    /**
-     * Репозиторий для сущности связывающей проект и пользователя.
-     */
-    private final ProjectUserRepository projectUserRepository;
-
-    /**
-     * Маппер для проектов.
-     */
-    private final ProjectMapper projectMapper;
-
-    /**
-     * Получить все проекты пользователя.
-     *
-     * @return все проекты пользователя
-     */
-    public List<ProjectTo> getAllProjects() {
-        var user = (UserTo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<ProjectUserEntity> userProjects = projectUserRepository.findAllByUserId(user.getId());
-
-        return userProjects.stream()
-            .map(projectUser -> projectMapper
-                .mapFromEntity(new ProjectTo(), projectUser.getProject()))
-            .collect(Collectors.toList());
-    }
 
     /**
      * Создать проект.
@@ -64,7 +41,7 @@ public class ProjectService {
                 .status(OperationStatus.FAILED)
                 .entityId(failedEntityId)
                 .errors(List.of(ProjectOperationResultTo.ProjectOperationErrorTo.builder()
-                    .failedEntityId(failedEntityId)
+                    .failedProjectId(failedEntityId)
                     .errorCode(ProjectOperationErrorCode.NAME_ALREADY_EXIST)
                     .build()))
                 .build();

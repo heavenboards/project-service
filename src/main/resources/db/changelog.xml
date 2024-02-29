@@ -4,6 +4,6 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <include file="/db/scripts/v1_create_project_entity_table.sql"/>
-    <include file="/db/scripts/v2_create_project_user_entity_table.sql"/>
+    <include file="/db/migration/project/run-once/v1_create_project_entity_table.sql"/>
+    <include file="/db/migration/project/run-once/v2_create_project_user_entity_table.sql"/>
 </databaseChangeLog>
