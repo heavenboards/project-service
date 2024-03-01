@@ -1,7 +1,8 @@
 version: "3.9"
 services:
-  heavensboard-project-service-postgres:
+  heavenboards-project-service-postgres:
     image: postgres:15
+    container_name: heavenboards_project_service_postgres
     environment:
       POSTGRES_DB: "project_service"
       POSTGRES_USER: "user"
