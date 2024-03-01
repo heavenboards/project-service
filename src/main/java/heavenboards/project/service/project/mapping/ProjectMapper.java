@@ -7,13 +7,11 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.beans.factory.annotation.Autowired;
-import transfer.contract.api.UserApi;
+import org.springframework.security.core.context.SecurityContextHolder;
 import transfer.contract.domain.project.ProjectTo;
 import transfer.contract.domain.user.UserTo;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 /**
  * Маппер для проектов.
@@ -22,44 +20,41 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public abstract class ProjectMapper {
     /**
-     * Api-клиент для сервиса пользователей.
-     */
-    private UserApi userApi;
-
-    /**
      * Маппинг из entity в to.
      *
-     * @param to     - to
      * @param entity - entity
      * @return to с проставленными полями
      */
     @Mapping(target = "users", ignore = true)
     @Mapping(target = "boards", ignore = true)
-    public abstract ProjectTo mapFromEntity(@MappingTarget ProjectTo to,
-                                               ProjectEntity entity);
+    public abstract ProjectTo mapFromEntity(ProjectEntity entity);
 
     /**
-     * После маппинга из entity в to. Проставляем пользователей.
+     * Маппинг из to в entity.
      *
-     * @param to     - to
-     * @param entity - entity
+     * @param entity - сущность которой проставляем поля
+     * @param to     - to-модель проекта
+     * @return сущность с проставленными полями
+     */
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "projectUsers", ignore = true)
+    public abstract ProjectEntity mapFromTo(@MappingTarget ProjectEntity entity,
+                                            ProjectTo to);
+
+    /**
+     * После маппинга из to в entity - проставляем projectUsers.
+     *
+     * @param entity - сущность которой проставляем поя
+     * @param to     - to-модель проекта
      */
     @AfterMapping
     @SuppressWarnings("unused")
-    protected void afterMappingFromEntity(final @MappingTarget ProjectTo to,
-                                          final ProjectEntity entity) {
-        List<UserTo> users = userApi.findUsersByIds(entity.getProjectUsers().stream()
-            .map(ProjectUserEntity::getUserId).collect(Collectors.toSet()));
-
-        to.setUsers(users);
-    }
-
-    /**
-     * Внедрение бина userApi.
-     * @param userApiBean - бин userApi
-     */
-    @Autowired
-    public void setUserApi(final UserApi userApiBean) {
-        this.userApi = userApiBean;
+    protected void afterMappingFromTo(final @MappingTarget ProjectEntity entity,
+                                      final ProjectTo to) {
+        var user = (UserTo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        entity.setProjectUsers(Set.of(ProjectUserEntity.builder()
+            .userId(user.getId())
+            .project(entity)
+            .build()));
     }
 }

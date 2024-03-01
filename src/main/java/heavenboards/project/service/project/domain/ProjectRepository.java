@@ -33,5 +33,5 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, UUID> {
         + "(SELECT * FROM project_user_entity WHERE user_id = :userId) pu "
         + "INNER JOIN (SELECT * FROM project_entity WHERE name = :name) p ON p.id = pu.project_id",
         nativeQuery = true)
-    UUID findIdByName(String name, UUID userId);
+    UUID findProjectIdByNameAndUserId(String name, UUID userId);
 }
