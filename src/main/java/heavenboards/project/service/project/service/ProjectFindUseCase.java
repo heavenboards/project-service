@@ -1,5 +1,6 @@
 package heavenboards.project.service.project.service;
 
+import heavenboards.project.service.project.domain.ProjectRepository;
 import heavenboards.project.service.project.domain.ProjectUserEntity;
 import heavenboards.project.service.project.domain.ProjectUserRepository;
 import heavenboards.project.service.project.mapping.ProjectMapper;
@@ -8,8 +9,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import transfer.contract.domain.project.ProjectTo;
 import transfer.contract.domain.user.UserTo;
+import transfer.contract.exception.BaseErrorCode;
+import transfer.contract.exception.ClientApplicationException;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -24,9 +28,27 @@ public class ProjectFindUseCase {
     private final ProjectUserRepository projectUserRepository;
 
     /**
+     * Репозиторий для проектов.
+     */
+    private final ProjectRepository projectRepository;
+
+    /**
      * Маппер для проектов.
      */
     private final ProjectMapper projectMapper;
+
+    /**
+     * Поиск проекта по идентификатору.
+     *
+     * @param projectId - идентификатор проекта
+     * @return данные проекта
+     */
+    public ProjectTo findProjectById(final UUID projectId) {
+        return projectRepository.findById(projectId)
+            .map(projectMapper::mapFromEntity)
+            .orElseThrow(() -> new ClientApplicationException(BaseErrorCode.NOT_FOUND,
+                String.format("Проект с идентификатором %s не найден!", projectId)));
+    }
 
     /**
      * Получить все проекты пользователя.

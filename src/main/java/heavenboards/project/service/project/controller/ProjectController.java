@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import transfer.contract.domain.project.ProjectOperationResultTo;
 import transfer.contract.domain.project.ProjectTo;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Контроллер для взаимодействия с проектами.
@@ -33,6 +35,17 @@ public class ProjectController {
      * Use case создания проекта.
      */
     private final ProjectCreateUseCase projectCreateUseCase;
+
+    /**
+     * Поиск проекта по идентификатору.
+     *
+     * @param id - идентификатор проекта
+     * @return данные проекта
+     */
+    @GetMapping("/{id}")
+    public ProjectTo findProjectById(final @PathVariable UUID id) {
+        return projectFindUseCase.findProjectById(id);
+    }
 
     /**
      * Получить все проекты пользователя.
