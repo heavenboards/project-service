@@ -1,6 +1,6 @@
 package heavenboards.project.service.project.integration;
 
-import heavenboards.project.service.SecurityTestUtil;
+import transfer.contract.util.test.SecurityTestUtil;
 import io.restassured.RestAssured;
 import io.restassured.http.Header;
 import io.restassured.parsing.Parser;
