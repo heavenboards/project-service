@@ -1,6 +1,6 @@
 package heavenboards.project.service.project.integration;
 
-import heavenboards.project.service.SecurityTestUtil;
+import security.service.util.test.SecurityTestUtil;
 import io.restassured.RestAssured;
 import io.restassured.http.Header;
 import io.restassured.parsing.Parser;
@@ -86,7 +86,7 @@ public class ProjectCreateIntegrationTest {
 
         Assertions.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         Assertions.assertEquals(OperationStatus.OK, operationResult.getStatus());
-        Assertions.assertNotNull(operationResult.getEntityId());
+        Assertions.assertNotNull(operationResult.getProjectId());
     }
 
     /**
@@ -108,7 +108,7 @@ public class ProjectCreateIntegrationTest {
         Assertions.assertEquals(OperationStatus.FAILED, operationResult.getStatus());
         Assertions.assertEquals(List.of(ProjectOperationResultTo.ProjectOperationErrorTo.builder()
             .failedProjectId(firstProjectCreateResponse.getBody().as(ProjectOperationResultTo.class)
-                .getEntityId())
+                .getProjectId())
             .errorCode(ProjectOperationErrorCode.NAME_ALREADY_EXIST)
             .build()), operationResult.getErrors());
     }

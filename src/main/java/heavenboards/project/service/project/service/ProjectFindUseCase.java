@@ -39,7 +39,7 @@ public class ProjectFindUseCase {
 
         return userProjects.stream()
             .map(projectUser -> projectMapper
-                .mapFromEntity(new ProjectTo(), projectUser.getProject()))
+                .mapFromEntity(projectUser.getProject()))
             .collect(Collectors.toList());
     }
 }
