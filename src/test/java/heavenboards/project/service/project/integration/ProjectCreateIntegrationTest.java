@@ -125,6 +125,7 @@ public class ProjectCreateIntegrationTest {
             .header(new Header(HttpHeaders.AUTHORIZATION, securityTestUtil.authHeader()))
             .body(ProjectTo.builder()
                 .name("Project One")
+                .positionWeight(1000)
                 .build())
             .when()
             .post("/project");

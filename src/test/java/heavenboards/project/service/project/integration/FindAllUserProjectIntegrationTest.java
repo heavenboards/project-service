@@ -79,7 +79,7 @@ public class FindAllUserProjectIntegrationTest {
      */
     @Test
     @DisplayName("Тест нахождения всех проектов")
-    public void validProjectCreateTest() {
+    public void findAllUserProjectsTest() {
         securityTestUtil.securityContextHelper();
         Mockito.when(userApi.findUserByUsername(Mockito.any()))
             .thenReturn(securityTestUtil.getAuthenticatedUser());

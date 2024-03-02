@@ -40,6 +40,12 @@ public class ProjectEntity {
     private String name;
 
     /**
+     * Вес позиции проекта.
+     * Нужен для определения порядка отображения проектов на UI.
+     */
+    private Integer positionWeight;
+
+    /**
      * Идентификаторы участников.
      */
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
@@ -73,5 +79,18 @@ public class ProjectEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    /**
+     * Переопределение toString() для избежания циклических отображений.
+     * @return строковое представление проекта
+     */
+    @Override
+    public String toString() {
+        return "ProjectEntity{"
+            + "id=" + id
+            + ", name='" + name + '\''
+            + ", positionWeight=" + positionWeight
+            + '}';
     }
 }
