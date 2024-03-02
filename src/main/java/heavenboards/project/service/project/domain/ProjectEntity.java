@@ -2,6 +2,7 @@ package heavenboards.project.service.project.domain;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -12,9 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -50,8 +51,8 @@ public class ProjectEntity {
      * Идентификаторы участников.
      */
     @Builder.Default
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private Set<ProjectUserEntity> projectUsers = new HashSet<>();
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ProjectUserEntity> projectUsers = new ArrayList<>();
 
     /**
      * Сравнение двух объектов через id.

@@ -1,5 +1,7 @@
 package heavenboards.project.service.project.integration;
 
+import heavenboards.project.service.project.domain.ProjectEntity;
+import heavenboards.project.service.project.domain.ProjectRepository;
 import security.service.util.test.SecurityTestUtil;
 import io.restassured.RestAssured;
 import io.restassured.http.Header;
@@ -28,6 +30,7 @@ import transfer.contract.domain.project.ProjectOperationResultTo;
 import transfer.contract.domain.project.ProjectTo;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Тест создания проекта.
@@ -61,6 +64,12 @@ public class ProjectCreateIntegrationTest {
     private int port;
 
     /**
+     * Репозиторий для проектов.
+     */
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    /**
      * Конфигурация перед тестами.
      */
     @BeforeAll
@@ -87,6 +96,12 @@ public class ProjectCreateIntegrationTest {
         Assertions.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         Assertions.assertEquals(OperationStatus.OK, operationResult.getStatus());
         Assertions.assertNotNull(operationResult.getProjectId());
+
+        Optional<ProjectEntity> project = projectRepository.findById(operationResult.getProjectId());
+        Assertions.assertTrue(project.isPresent());
+        Assertions.assertEquals(1, project.get().getProjectUsers().size());
+        Assertions.assertEquals(securityTestUtil.getAuthenticatedUser().getId(),
+            project.get().getProjectUsers().get(0).getUserId());
     }
 
     /**
@@ -98,19 +113,21 @@ public class ProjectCreateIntegrationTest {
         securityTestUtil.securityContextHelper();
         Mockito.when(userApi.findUserByUsername(Mockito.any()))
             .thenReturn(securityTestUtil.getAuthenticatedUser());
-        Response firstProjectCreateResponse = createProjectAndGetResponse();
-        Response response = createProjectAndGetResponse();
-        ProjectOperationResultTo operationResult = response
-            .getBody()
-            .as(ProjectOperationResultTo.class);
 
-        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-        Assertions.assertEquals(OperationStatus.FAILED, operationResult.getStatus());
+        Response successResponse = createProjectAndGetResponse();
+        ProjectOperationResultTo successOperationResult = successResponse
+            .getBody().as(ProjectOperationResultTo.class);
+
+        Response errorResponse = createProjectAndGetResponse();
+        ProjectOperationResultTo errorOperationResult = errorResponse
+            .getBody().as(ProjectOperationResultTo.class);
+
+        Assertions.assertEquals(HttpStatus.OK.value(), errorResponse.getStatusCode());
+        Assertions.assertEquals(OperationStatus.FAILED, errorOperationResult.getStatus());
         Assertions.assertEquals(List.of(ProjectOperationResultTo.ProjectOperationErrorTo.builder()
-            .failedProjectId(firstProjectCreateResponse.getBody().as(ProjectOperationResultTo.class)
-                .getProjectId())
+            .failedProjectId(successOperationResult.getProjectId())
             .errorCode(ProjectOperationErrorCode.NAME_ALREADY_EXIST)
-            .build()), operationResult.getErrors());
+            .build()), errorOperationResult.getErrors());
     }
 
     /**

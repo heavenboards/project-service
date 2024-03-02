@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import transfer.contract.domain.project.ProjectTo;
 import transfer.contract.domain.user.UserTo;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Маппер для проектов.
@@ -52,7 +52,7 @@ public abstract class ProjectMapper {
     protected void afterMappingFromTo(final @MappingTarget ProjectEntity entity,
                                       final ProjectTo to) {
         var user = (UserTo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        entity.setProjectUsers(Set.of(ProjectUserEntity.builder()
+        entity.setProjectUsers(List.of(ProjectUserEntity.builder()
             .userId(user.getId())
             .project(entity)
             .build()));
