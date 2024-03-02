@@ -2,6 +2,7 @@ package heavenboards.project.service.project.domain;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -12,8 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -40,10 +42,17 @@ public class ProjectEntity {
     private String name;
 
     /**
+     * Вес позиции проекта.
+     * Нужен для определения порядка отображения проектов на UI.
+     */
+    private Integer positionWeight;
+
+    /**
      * Идентификаторы участников.
      */
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private Set<ProjectUserEntity> projectUsers;
+    @Builder.Default
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ProjectUserEntity> projectUsers = new ArrayList<>();
 
     /**
      * Сравнение двух объектов через id.
@@ -73,5 +82,18 @@ public class ProjectEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    /**
+     * Переопределение toString() для избежания циклических отображений.
+     * @return строковое представление проекта
+     */
+    @Override
+    public String toString() {
+        return "ProjectEntity{"
+            + "id=" + id
+            + ", name='" + name + '\''
+            + ", positionWeight=" + positionWeight
+            + '}';
     }
 }
