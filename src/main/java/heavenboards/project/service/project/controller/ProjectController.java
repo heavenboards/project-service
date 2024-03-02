@@ -43,6 +43,7 @@ public class ProjectController {
      * @return данные проекта
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Поиск проекта по идентификатору")
     public ProjectTo findProjectById(final @PathVariable UUID id) {
         return projectFindUseCase.findProjectById(id);
     }
