@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -48,8 +49,9 @@ public class ProjectEntity {
     /**
      * Идентификаторы участников.
      */
+    @Builder.Default
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private Set<ProjectUserEntity> projectUsers;
+    private Set<ProjectUserEntity> projectUsers = new HashSet<>();
 
     /**
      * Сравнение двух объектов через id.
