@@ -7,6 +7,7 @@ import heavenboards.project.service.project.mapping.ProjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import transfer.contract.domain.project.ProjectTo;
 import transfer.contract.domain.user.UserTo;
 import transfer.contract.exception.BaseErrorCode;
@@ -43,6 +44,7 @@ public class ProjectFindUseCase {
      * @param projectId - идентификатор проекта
      * @return данные проекта
      */
+    @Transactional(readOnly = true)
     public ProjectTo findProjectById(final UUID projectId) {
         return projectRepository.findById(projectId)
             .map(projectMapper::mapFromEntity)
@@ -55,6 +57,7 @@ public class ProjectFindUseCase {
      *
      * @return все проекты пользователя
      */
+    @Transactional(readOnly = true)
     public List<ProjectTo> getAllProjects() {
         var user = (UserTo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<ProjectUserEntity> userProjects = projectUserRepository.findAllByUserId(user.getId());
