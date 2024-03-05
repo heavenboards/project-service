@@ -51,8 +51,8 @@ public class ProjectEntity {
      * Идентификаторы участников.
      */
     @Builder.Default
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<ProjectUserEntity> projectUsers = new ArrayList<>();
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private List<ProjectUserEntity> users = new ArrayList<>();
 
     /**
      * Сравнение двух объектов через id.

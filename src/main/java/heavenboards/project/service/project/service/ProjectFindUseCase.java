@@ -47,7 +47,7 @@ public class ProjectFindUseCase {
     @Transactional(readOnly = true)
     public ProjectTo findProjectById(final UUID projectId) {
         return projectRepository.findById(projectId)
-            .map(projectMapper::mapFromEntity)
+            .map(entity -> projectMapper.mapFromEntity(new ProjectTo(), entity))
             .orElseThrow(() -> new ClientApplicationException(BaseErrorCode.NOT_FOUND,
                 String.format("Проект с идентификатором %s не найден!", projectId)));
     }
@@ -64,7 +64,7 @@ public class ProjectFindUseCase {
 
         return userProjects.stream()
             .map(projectUser -> projectMapper
-                .mapFromEntity(projectUser.getProject()))
+                .mapFromEntity(new ProjectTo(), projectUser.getProject()))
             .collect(Collectors.toList());
     }
 }
