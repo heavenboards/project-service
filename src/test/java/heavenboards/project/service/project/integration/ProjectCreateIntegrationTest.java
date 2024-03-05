@@ -2,6 +2,7 @@ package heavenboards.project.service.project.integration;
 
 import heavenboards.project.service.project.domain.ProjectEntity;
 import heavenboards.project.service.project.domain.ProjectRepository;
+import heavenboards.project.service.project.domain.ProjectUserRepository;
 import security.service.util.test.SecurityTestUtil;
 import io.restassured.RestAssured;
 import io.restassured.http.Header;
@@ -28,6 +29,7 @@ import transfer.contract.domain.common.OperationStatus;
 import transfer.contract.domain.project.ProjectOperationErrorCode;
 import transfer.contract.domain.project.ProjectOperationResultTo;
 import transfer.contract.domain.project.ProjectTo;
+import transfer.contract.domain.user.UserTo;
 
 import java.util.List;
 import java.util.Optional;
@@ -70,6 +72,12 @@ public class ProjectCreateIntegrationTest {
     private ProjectRepository projectRepository;
 
     /**
+     * Репозиторий для сущности связывающей проект и пользователя.
+     */
+    @Autowired
+    private ProjectUserRepository projectUserRepository;
+
+    /**
      * Конфигурация перед тестами.
      */
     @BeforeAll
@@ -86,9 +94,10 @@ public class ProjectCreateIntegrationTest {
     @DisplayName("Тест валидного создания проекта")
     public void validProjectCreateTest() {
         securityTestUtil.securityContextHelper();
+        UserTo creator = securityTestUtil.getAuthenticatedUser();
         Mockito.when(userApi.findUserByUsername(Mockito.any()))
-            .thenReturn(securityTestUtil.getAuthenticatedUser());
-        Response response = createProjectAndGetResponse();
+            .thenReturn(creator);
+        Response response = createProjectAndGetResponse(creator);
         ProjectOperationResultTo operationResult = response
             .getBody()
             .as(ProjectOperationResultTo.class);
@@ -99,9 +108,11 @@ public class ProjectCreateIntegrationTest {
 
         Optional<ProjectEntity> project = projectRepository.findById(operationResult.getProjectId());
         Assertions.assertTrue(project.isPresent());
-        Assertions.assertEquals(1, project.get().getProjectUsers().size());
+        Assertions.assertEquals(1, project.get().getUsers().size());
         Assertions.assertEquals(securityTestUtil.getAuthenticatedUser().getId(),
-            project.get().getProjectUsers().get(0).getUserId());
+            project.get().getUsers().get(0).getUserId());
+        Assertions.assertTrue(projectUserRepository.existsById(project.get()
+            .getUsers().get(0).getId()));
     }
 
     /**
@@ -111,14 +122,15 @@ public class ProjectCreateIntegrationTest {
     @DisplayName("Тест создания проекта с существующим именем у пользователя")
     public void existingProjectNameCreateTest() {
         securityTestUtil.securityContextHelper();
+        UserTo creator = securityTestUtil.getAuthenticatedUser();
         Mockito.when(userApi.findUserByUsername(Mockito.any()))
-            .thenReturn(securityTestUtil.getAuthenticatedUser());
+            .thenReturn(creator);
 
-        Response successResponse = createProjectAndGetResponse();
+        Response successResponse = createProjectAndGetResponse(creator);
         ProjectOperationResultTo successOperationResult = successResponse
             .getBody().as(ProjectOperationResultTo.class);
 
-        Response errorResponse = createProjectAndGetResponse();
+        Response errorResponse = createProjectAndGetResponse(creator);
         ProjectOperationResultTo errorOperationResult = errorResponse
             .getBody().as(ProjectOperationResultTo.class);
 
@@ -133,9 +145,10 @@ public class ProjectCreateIntegrationTest {
     /**
      * Оправить запрос на создание проекта и получить ответ.
      *
+     * @param creator - создатель проекта
      * @return ответ
      */
-    private Response createProjectAndGetResponse() {
+    private Response createProjectAndGetResponse(UserTo creator) {
         return RestAssured
             .given()
             .contentType("application/json")
@@ -143,6 +156,7 @@ public class ProjectCreateIntegrationTest {
             .body(ProjectTo.builder()
                 .name("Project One")
                 .positionWeight(1000)
+                .users(List.of(creator))
                 .build())
             .when()
             .post("/project");
