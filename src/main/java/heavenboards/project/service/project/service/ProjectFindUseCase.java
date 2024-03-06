@@ -58,7 +58,7 @@ public class ProjectFindUseCase {
      * @return все проекты пользователя
      */
     @Transactional(readOnly = true)
-    public List<ProjectTo> getAllProjects() {
+    public List<ProjectTo> findUserProjects() {
         var user = (UserTo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<ProjectUserEntity> userProjects = projectUserRepository.findAllByUserId(user.getId());
 
