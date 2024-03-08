@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5436/project_service
-    username: user
-    password: password
+    url: jdbc:postgresql://${DOCKER_NETWORK_NAME}:5432/project_service
+    username: ${POSTGRES_DATABASE_USERNAME}
+    password: ${POSTGRES_DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     properties:
@@ -10,30 +10,31 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
   liquibase:
     change-log: classpath:/db/changelog.xml
   docker:
     compose:
-      enabled: true
+      enabled: false
       file: classpath:/docker-compose.yml
   web:
     resources:
       add-mappings: false
 server:
+  host: ${REMOTE_SERVER_HOST}
   port: 8094
   error:
     whitelabel:
       enabled: false
 microservice:
   user-api:
-    url: http://localhost:8093
+    url: http://${server.host}:8093
   project-api:
-    url: http://localhost:8094
+    url: http://${server.host}:8094
   board-api:
-    url: http://localhost:8095
+    url: http://${server.host}:8095
   task-api:
-    url: http://localhost:8096
+    url: http://${server.host}:8096
 jwt:
-  secret: 4534A29BE19F7D52DFCFA25F266C74534A29BE19F7D52DFCFA25F266C74534A29BE19F7D52DFCFA25F266C7
+  secret: ${JWT_SECRET}
   expiration-time-seconds: 3600
