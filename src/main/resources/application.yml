@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${DOCKER_NETWORK_NAME}:5432/project_service
+    url: jdbc:postgresql://heavenboards_postgres_instance:5432/project_service
     username: ${POSTGRES_DATABASE_USERNAME}
     password: ${POSTGRES_DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
