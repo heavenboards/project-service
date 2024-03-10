@@ -115,5 +115,6 @@ jobs:
           docker rmi $(docker images -f "dangling=true" -q) &&
           docker rmi ${{ vars.CI_REGISTRY_USER }}/${{ github.event.repository.name }}:1.0.0 -f || true &&
           docker pull ${{ vars.CI_REGISTRY_USER }}/${{ github.event.repository.name }}:1.0.0 || true &&
+          docker rmi $(docker images -f "dangling=true" -q) &&
           docker network create -d bridge ${{ vars.DOCKER_NETWORK_NAME }} || true &&
           docker run -d --rm -e REMOTE_SERVER_HOST=${{ vars.REMOTE_SERVER_HOST }} -e DOCKER_NETWORK_NAME=${{ vars.DOCKER_NETWORK_NAME }} -e POSTGRES_DATABASE_USERNAME=${{ vars.POSTGRES_DATABASE_USERNAME }} -e POSTGRES_DATABASE_PASSWORD=${{ vars.POSTGRES_DATABASE_PASSWORD }} -e JWT_SECRET=${{ vars.JWT_SECRET }} --name ${{ vars.CI_REGISTRY_USER }}_${{ github.event.repository.name }} --network ${{ vars.DOCKER_NETWORK_NAME }} -p ${{ vars.DOCKER_CONTAINER_PORT }}:${{ vars.DOCKER_CONTAINER_PORT }} ${{ vars.CI_REGISTRY_USER }}/${{ github.event.repository.name }}:1.0.0"
