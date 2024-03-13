@@ -116,11 +116,11 @@ jobs:
 
       - name: 👉🏼 Перезапускаем контейнер с приложением
         run: sshpass -p ${{ vars.REMOTE_SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ vars.REMOTE_SERVER_HOST }} "
-          docker stop ${{ vars.CI_REGISTRY_USER }}_${{ github.event.repository.name }} || true &&
-          docker rm ${{ vars.CI_REGISTRY_USER }}_${{ github.event.repository.name }} || true &&
+          docker stop ${{ vars.CI_REGISTRY_USER }}_${{ vars.PROJECT_SERVICE_REPOSITORY_NAME }} || true &&
+          docker rm ${{ vars.CI_REGISTRY_USER }}_${{ vars.PROJECT_SERVICE_REPOSITORY_NAME }} || true &&
           docker rmi $(docker images -f "dangling=true" -q) &&
-          docker rmi ${{ vars.CI_REGISTRY_USER }}/${{ github.event.repository.name }}:1.0.0 -f || true &&
-          docker pull ${{ vars.CI_REGISTRY_USER }}/${{ github.event.repository.name }}:1.0.0 || true &&
+          docker rmi ${{ vars.CI_REGISTRY_USER }}/${{ vars.PROJECT_SERVICE_REPOSITORY_NAME }}:1.0.0 -f || true &&
+          docker pull ${{ vars.CI_REGISTRY_USER }}/${{ vars.PROJECT_SERVICE_REPOSITORY_NAME }}:1.0.0 || true &&
           docker rmi $(docker images -f "dangling=true" -q) &&
           docker network create -d bridge ${{ vars.DOCKER_NETWORK_NAME }} || true &&
-          docker run -d --rm -e REMOTE_SERVER_HOST=${{ vars.REMOTE_SERVER_HOST }} -e DOCKER_NETWORK_NAME=${{ vars.DOCKER_NETWORK_NAME }} -e POSTGRES_DATABASE_USERNAME=${{ vars.POSTGRES_DATABASE_USERNAME }} -e POSTGRES_DATABASE_PASSWORD=${{ vars.POSTGRES_DATABASE_PASSWORD }} -e JWT_SECRET=${{ vars.JWT_SECRET }} --name ${{ vars.CI_REGISTRY_USER }}_${{ github.event.repository.name }} --network ${{ vars.DOCKER_NETWORK_NAME }} -p ${{ vars.DOCKER_CONTAINER_PORT }}:${{ vars.DOCKER_CONTAINER_PORT }} ${{ vars.CI_REGISTRY_USER }}/${{ github.event.repository.name }}:1.0.0"
+          docker run -d --rm -e REMOTE_SERVER_HOST=${{ vars.REMOTE_SERVER_HOST }} -e DOCKER_NETWORK_NAME=${{ vars.DOCKER_NETWORK_NAME }} -e POSTGRES_DATABASE_USERNAME=${{ vars.POSTGRES_DATABASE_USERNAME }} -e POSTGRES_DATABASE_PASSWORD=${{ vars.POSTGRES_DATABASE_PASSWORD }} -e JWT_SECRET=${{ vars.JWT_SECRET }} --name ${{ vars.CI_REGISTRY_USER }}_${{ vars.PROJECT_SERVICE_REPOSITORY_NAME }} --network ${{ vars.DOCKER_NETWORK_NAME }} -p ${{ vars.PROJECT_SERVICE_CONTAINER_PORT }}:${{ vars.PROJECT_SERVICE_CONTAINER_PORT }} ${{ vars.CI_REGISTRY_USER }}/${{ vars.PROJECT_SERVICE_REPOSITORY_NAME }}:1.0.0"
