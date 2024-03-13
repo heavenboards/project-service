@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5436/project_service
+    username: user
+    password: password
+  docker:
+    compose:
+      enabled: true
+server:
+  host: localhost
+jwt:
+  secret: 7534A25BE19F3F52DFCFA25F266C84534A29BE19F7652DFCFA25F262C74533A29BE19F7D52DFCFA25F266C7

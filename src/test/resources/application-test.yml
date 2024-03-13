@@ -4,12 +4,7 @@ spring:
     username: user123
     password: pass123
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    generate-ddl: true
-    hibernate:
-      ddl-auto: validate
-  liquibase:
-    change-log: classpath:/db/changelog.xml
+server:
+  host: localhost
+jwt:
+  secret: 4534A25BE19F7F52DFCFA25F266C84534A29BE19F7452DFCFA25F266C74533A29BE19F7D52DFCFA25F266C7

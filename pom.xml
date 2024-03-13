@@ -26,4 +26,8 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>project-service</finalName>
+    </build>
 </project>
