@@ -14,6 +14,7 @@ jobs:
 
       - name: 👉🏼 Инициализируем гит сабмодули
         run: |
+          git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"
           git submodule update --init --remote --recursive
           git submodule foreach 'git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"'
 
@@ -37,6 +38,7 @@ jobs:
 
       - name: 👉🏼 Инициализируем гит сабмодули
         run: |
+          git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"
           git submodule update --init --remote --recursive
           git submodule foreach 'git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"'
 
@@ -60,6 +62,7 @@ jobs:
 
       - name: 👉🏼 Инициализируем гит сабмодули
         run: |
+          git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"
           git submodule update --init --remote --recursive
           git submodule foreach 'git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"'
 
@@ -84,6 +87,7 @@ jobs:
 
       - name: 👉🏼 Инициализируем гит сабмодули
         run: |
+          git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"
           git submodule update --init --remote --recursive
           git submodule foreach 'git checkout ${GITHUB_REF##*/} && git pull || echo "In ${sm_path} branch ${GITHUB_REF##*/} not found"'
 
